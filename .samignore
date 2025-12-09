@@ -1,0 +1,15 @@
+src/**
+*.test.ts
+*.test.js
+coverage/**
+.git/**
+.vscode/**
+.idea/**
+*.md
+!README.md
+env.template
+.env
+Makefile
+jest.config.js
+tsconfig.json
+
