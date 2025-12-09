@@ -52,7 +52,7 @@ jobs:
             --no-confirm-changeset \
             --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM \
             --resolve-s3 \
-            --stack-name serverless-typescript-api \
+            --stack-name add-sls-repo \
             --region ${{ secrets.AWS_REGION }} \
             --parameter-overrides Environment=prod
 
