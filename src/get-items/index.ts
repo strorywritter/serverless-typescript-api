@@ -7,7 +7,6 @@ import { config, validateConfig } from '../config/env.js';
 
 const dynamoClient = DynamoDBDocumentClient.from(new DynamoDBClient({ region: config.awsRegion }));
 
-// Helper function to generate accessible S3 URL from key
 const generateImageUrl = async (imageKey: string): Promise<string | null> => {
   try {
     const command = new GetObjectCommand({
@@ -15,17 +14,14 @@ const generateImageUrl = async (imageKey: string): Promise<string | null> => {
       Key: imageKey,
     });
 
-    // Generate pre-signed URL that expires in 1 hour
     const signedUrl = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
     return signedUrl;
   } catch (error) {
     console.error('Error generating image URL:', error);
-    // Return null if generation fails
     return null;
   }
 };
 
-// Helper function to add image URLs to items
 const addImageUrlsToItems = async (items: any[]): Promise<any[]> => {
   const itemsWithUrls = await Promise.all(
     items.map(async (item) => {
@@ -57,7 +53,6 @@ export const handler = async (
   try {
     validateConfig();
 
-    // Verify Cognito authentication
     const authHeader = event.headers.Authorization || event.headers.authorization;
     if (!authHeader) {
       return {
@@ -75,7 +70,6 @@ export const handler = async (
 
     let items: any[] = [];
 
-    // If ID is provided in path, get single item
     if (pathParameters.id) {
       const itemId = pathParameters.id;
 
@@ -97,7 +91,6 @@ export const handler = async (
         };
       }
 
-      // Add image URL to the item
       const itemWithUrl = await addImageUrlsToItems([result.Item]);
 
       return {
@@ -113,12 +106,10 @@ export const handler = async (
       };
     }
 
-    // Get all items or filter by criteria
     let scanParams: any = {
       TableName: config.tableName,
     };
 
-    // Add filters if provided
     if (queryParameters.limit) {
       scanParams.Limit = parseInt(queryParameters.limit);
     }
@@ -129,7 +120,6 @@ export const handler = async (
 
     const result = await dynamoClient.send(new ScanCommand(scanParams));
 
-    // Add image URLs to all items
     const itemsWithUrls = await addImageUrlsToItems(result.Items || []);
 
     return {

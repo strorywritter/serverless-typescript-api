@@ -13,7 +13,6 @@ export const handler = async (
   try {
     validateConfig();
 
-    // Verify Cognito authentication
     const authHeader = event.headers.Authorization || event.headers.authorization;
     if (!authHeader) {
       return {
@@ -40,7 +39,6 @@ export const handler = async (
       };
     }
 
-    // Check if item exists before deleting
     const existingItem = await dynamoClient.send(
       new GetCommand({
         TableName: config.tableName,
@@ -59,7 +57,6 @@ export const handler = async (
       };
     }
 
-    // Delete the item
     await dynamoClient.send(
       new DeleteCommand({
         TableName: config.tableName,
@@ -69,7 +66,6 @@ export const handler = async (
 
     const timestamp = new Date().toISOString();
 
-    // Send SNS notification
     const snsMessage = {
       id: itemId,
       action: 'item_deleted',

@@ -13,7 +13,6 @@ export const handler = async (
   try {
     validateConfig();
 
-    // Verify Cognito authentication
     const authHeader = event.headers.Authorization || event.headers.authorization;
     if (!authHeader) {
       return {
@@ -53,7 +52,6 @@ export const handler = async (
 
     const updateData = JSON.parse(event.body);
 
-    // Check if item exists
     const existingItem = await dynamoClient.send(
       new GetCommand({
         TableName: config.tableName,
@@ -74,7 +72,6 @@ export const handler = async (
 
     const timestamp = new Date().toISOString();
 
-    // Build update expression
     const updateExpression = 'SET updatedAt = :updatedAt';
     const expressionAttributeValues: any = {
       ':updatedAt': timestamp,
@@ -96,7 +93,6 @@ export const handler = async (
 
     const finalUpdateExpression = `SET ${updateParts.join(', ')}`;
 
-    // Update the item
     await dynamoClient.send(
       new UpdateCommand({
         TableName: config.tableName,
@@ -108,7 +104,6 @@ export const handler = async (
       })
     );
 
-    // Get the updated item
     const updatedItem = await dynamoClient.send(
       new GetCommand({
         TableName: config.tableName,
@@ -116,7 +111,6 @@ export const handler = async (
       })
     );
 
-    // Send SNS notification
     const snsMessage = {
       id: itemId,
       action: 'item_updated',

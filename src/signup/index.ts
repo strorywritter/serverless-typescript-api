@@ -52,23 +52,20 @@ export const handler = async (
 
     const signUpResponse = await cognitoClient.send(signUpCommand);
 
-    // Auto-confirm the user so they can login immediately
-    // This sets the user's confirmation status to "CONFIRMED" in Cognito
     try {
       const confirmCommand = new AdminConfirmSignUpCommand({
         UserPoolId: config.userPoolId,
         Username: email,
       });
       await cognitoClient.send(confirmCommand);
-      
-      // Verify the user status is now CONFIRMED
+
       const getUserCommand = new AdminGetUserCommand({
         UserPoolId: config.userPoolId,
         Username: email,
       });
       const userDetails = await cognitoClient.send(getUserCommand);
-      
-      const userStatus = userDetails.UserStatus; // Should be "CONFIRMED"
+
+      const userStatus = userDetails.UserStatus;
       
       if (userStatus !== 'CONFIRMED') {
         console.warn(`User status is ${userStatus}, expected CONFIRMED`);
@@ -88,7 +85,6 @@ export const handler = async (
         }),
       };
     } catch (confirmError: any) {
-      // If user is already confirmed, verify and return success
       if (confirmError.name === 'NotAuthorizedException' || confirmError.name === 'AliasExistsException') {
         try {
           const getUserCommand = new AdminGetUserCommand({
@@ -116,9 +112,7 @@ export const handler = async (
           console.error('Error getting user status:', getUserError);
         }
       }
-      
-      // If confirmation failed for other reasons, log but still return success
-      // The user was created, even if confirmation had issues
+
       console.warn('Auto-confirmation warning:', confirmError.message);
       
       return {

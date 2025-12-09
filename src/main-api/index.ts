@@ -17,7 +17,6 @@ export const handler = async (
   try {
     validateConfig();
 
-    // Verify Cognito authentication
     const authHeader = event.headers.Authorization || event.headers.authorization;
     if (!authHeader) {
       return {
@@ -72,19 +71,15 @@ export const handler = async (
 
     let imageKey = null;
 
-    // If image is provided, store it to S3 first and get the key
     if (data.image) {
       const imageUrl = data.image;
 
-      // Download image from URL
       const response = await fetch(imageUrl);
       const arrayBuffer = await response.arrayBuffer();
       const imageBuffer = Buffer.from(arrayBuffer);
 
-      // Generate S3 key
       imageKey = `${id}/${id}.jpg`;
 
-      // Store image to S3
       await s3Client.send(
         new PutObjectCommand({
           Bucket: config.bucketName,
@@ -95,12 +90,11 @@ export const handler = async (
       );
     }
 
-    // Store item in DynamoDB with S3 key (not full URL)
     const dynamoItem = {
       id,
       title: data.title,
       price: data.price,
-      imageKey: imageKey, // Store only the S3 key
+      imageKey: imageKey,
       createdAt: timestamp,
       updatedAt: timestamp,
     };
@@ -136,7 +130,7 @@ export const handler = async (
       body: JSON.stringify({
         message: 'Data created successfully',
         id,
-        imageKey, // Return the S3 key instead of full URL
+        imageKey,
       }),
     };
   } catch (error: any) {
