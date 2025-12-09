@@ -55,7 +55,7 @@ A complete serverless project built with TypeScript, AWS Lambda, DynamoDB, S3, S
 ├── package.json                # Node.js dependencies and scripts
 ├── tsconfig.json               # TypeScript configuration
 ├── jest.config.js              # Jest testing configuration
-├── samconfig.toml             # SAM deployment configuration
+├── samconfig.toml              # SAM deployment configuration
 └── README.md                   # This file
 ```
 
