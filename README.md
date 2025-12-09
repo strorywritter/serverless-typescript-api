@@ -12,7 +12,8 @@ A complete serverless project built with TypeScript, AWS Lambda, DynamoDB, S3, S
 - **Testing**: Jest unit tests for all Lambda functions
 - **Local Development**: Run functions locally without Docker
 - **Infrastructure as Code**: AWS SAM template for automated deployment
-
+- **CI/CD Action**: AWS SAM template integrated with GitHub Actions CI workflow
+- 
 ## 📁 Project Structure
 
 ```
