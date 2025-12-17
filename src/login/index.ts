@@ -71,6 +71,7 @@ export const handler = async (
         idToken: response.AuthenticationResult.IdToken,
         refreshToken: response.AuthenticationResult.RefreshToken,
         expiresIn: response.AuthenticationResult.ExpiresIn,
+        updated:'update confirmed'
       }),
     };
   } catch (error: any) {
